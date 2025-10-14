@@ -2,9 +2,13 @@ version: '3.8'
 name: awsgoo
 services:
   nginx-proxy:
+    # TODO : 우리는 default.conf 가 들어있는 nginx 를 사용
+    # images 가 아내라 아래 blog 블럭과 같은 build 를 사용
+    # 그리고 default.conf 의 upsteam 에 있는 서비스 이름을 아래 생성 되는 블로그 패턴과 맞춰 주기
     image: nginxproxy/nginx-proxy # https://github.com/nginx-proxy/nginx-proxy
     ports:
       - "9889:80"
+    # TODO : 이거 필요 한지 고민해 보기
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
     depends_on:
