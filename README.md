@@ -2,22 +2,22 @@
 
 # Dockerfile
 
+## 구조
 ```mermaid
 graph TD;
-    ngix_lb-2-->a2blog-1;
-    ngix_lb-2-->a2blog-2;
+    ngix_lb-1-->myblog-1;
+    ngix_lb-1-->myblog-2;
 ```
 
+## 첫번째 도커로 수동으로 LB GATEWAY 구성
 ```
-$ docker build -t a2blog:1.1.0 docker_file/httpd/
-$ docker run -dit --name a2blog-1 -p 8051:80 a2blog:1.1.0
-$ docker run -dit --name a2blog-2 -p 8052:80 a2blog:1.1.0
+$ docker build -t myblog:1.1.0 docker_file/httpd/
+$ docker run -dit --name myblog-1 -p 8051:80 myblog:1.1.0
+$ docker run -dit --name myblog-2 -p 8052:80 myblog:1.1.0
 
 $ docker build -t nginx_lb:1.1.0 docker_file/nginx/
-$ docker run --name ngix_lb-1 -d -p 9051:80 nginx_lb:1.1.0
-
 # https://docs.docker.com/engine/reference/commandline/run/#options
-$ docker run --name ngix_lb-2 -d -p 9052:80 --link a2blog-1 --link a2blog-2 nginx_lb:1.1.0
+$ docker run --name ngix_lb-2 -d -p 9052:80 --link myblog-1 --link myblog-2 nginx_lb:1.1.0
 ```
 
 # docker compose
