@@ -2,11 +2,9 @@ version: '3.8'
 name: awsgoo
 services:
   nginx-proxy:
-    image: nginxproxy/nginx-proxy:1.8 # https://github.com/nginx-proxy/nginx-proxy
+    build: ../../docker_file/nginx_compose
     ports:
       - "9889:80"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
     depends_on:
       - blog
     deploy:
@@ -19,19 +17,22 @@ services:
           memory: 20M
 
   blog:
-    build: ../../docker_file/httpd
+    # build: ../../docker_file/httpd
+    image: datamario24/spring-rest-api:0.3.1
+    ports:
+      - "8765:8080"
     deploy:
       mode: replicated
       replicas: 1 # https://docs.docker.com/compose/compose-file/deploy/#replicas
       resources: # https://docs.docker.com/compose/compose-file/compose-file-v3/#resources
         limits:
-          cpus: '0.05'
-          memory: 150M
+          cpus: '1'
+          memory: 500M
         reservations:
           cpus: '0.01'
           memory: 30M
     expose:
-      - "80"
+      - "8080"
     environment:
-      - VIRTUAL_HOST=aws.abcdef.com,aws.google.com
-      - VIRTUAL_PORT=80
+      - VIRTUAL_HOST=aws.abcdef.com,aws.google.com,localhost
+      - VIRTUAL_PORT=8080
