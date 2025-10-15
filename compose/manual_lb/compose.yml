@@ -31,5 +31,5 @@ services:
     expose:
       - "80"
     environment:
-      - VIRTUAL_HOST=aws.abcdef.com,aws.google.com
+      - VIRTUAL_HOST=aws.abcdef.com,aws.google.com,localhost
       - VIRTUAL_PORT=80
