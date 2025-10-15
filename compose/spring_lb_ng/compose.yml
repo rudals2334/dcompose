@@ -1,0 +1,55 @@
+version: '3.8'
+name: awsgoo
+services:
+  nginx-proxy:
+    build: ../../docker_file/nginx_compose
+    ports:
+      - "9889:80"
+    depends_on:
+      - blog
+    deploy:
+      resources:
+        limits:
+          cpus: '0.20'
+          memory: 50M
+        reservations:
+          cpus: '0.05'
+          memory: 20M
+
+  blog:
+    # build: ../../docker_file/httpd
+    image: datamario24/spring-rest-api:0.3.1
+    ports:
+      - "8765:8080"
+    deploy:
+      mode: replicated
+      replicas: 1 # https://docs.docker.com/compose/compose-file/deploy/#replicas
+      resources: # https://docs.docker.com/compose/compose-file/compose-file-v3/#resources
+        limits:
+          cpus: '1'
+          memory: 500M
+        reservations:
+          cpus: '0.01'
+          memory: 30M
+    expose:
+      - "8080"
+    environment:
+      - VIRTUAL_HOST=aws.abcdef.com,aws.google.com,localhost
+      - VIRTUAL_PORT=8080
+
+  controller:
+    image: ngrinder/controller:3.5.8
+    platform: linux/amd64
+    restart: always
+    ports:
+      - "8300:80"
+      - "16001:16001"
+      - "12000-12009:12000-12009"
+    volumes:
+      - ./ngrinder-controller:/opt/ngrinder-controller
+  agent:
+    image: ngrinder/agent:3.5.8
+    platform: linux/amd64
+    restart: always
+    links:
+      - controller
