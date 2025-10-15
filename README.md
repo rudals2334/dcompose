@@ -5,8 +5,8 @@
 ## 구조
 ```mermaid
 graph TD;
-    ngix_lb-1-->myblog-1;
-    ngix_lb-1-->myblog-2;
+    nginx_lb-1-->myblog-1;
+    nginx_lb-1-->myblog-2;
 ```
 
 ## 첫번째 도커로 수동으로 LB GATEWAY 구성
@@ -17,7 +17,12 @@ $ docker run -dit --name myblog-2 -p 8052:80 myblog:1.1.0
 
 $ docker build -t nginx_lb:1.1.0 docker_file/nginx/
 # https://docs.docker.com/engine/reference/commandline/run/#options
-$ docker run --name ngix_lb-2 -d -p 9052:80 --link myblog-1 --link myblog-2 nginx_lb:1.1.0
+$ docker run --name nginx_lb-1 -d -p 9051:80 --link myblog-1 --link myblog-2 nginx_lb:1.1.0
+
+# 확인
+# http://localhost:9091 반복 접근
+$ sudo docker logs -f myblog-1
+$ sudo docker logs -f myblog-2
 ```
 
 # docker compose
