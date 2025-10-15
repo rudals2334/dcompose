@@ -1,0 +1,35 @@
+version: '3.8'
+name: awsgoo
+services:
+  nginx-proxy:
+    build: ../../docker_file/nginx_compose
+    ports:
+      - "9889:80"
+    depends_on:
+      - blog
+    deploy:
+      resources:
+        limits:
+          cpus: '0.20'
+          memory: 50M
+        reservations:
+          cpus: '0.05'
+          memory: 20M
+
+  blog:
+    build: ../../docker_file/httpd
+    deploy:
+      mode: replicated
+      replicas: 2 # https://docs.docker.com/compose/compose-file/deploy/#replicas
+      resources: # https://docs.docker.com/compose/compose-file/compose-file-v3/#resources
+        limits:
+          cpus: '0.05'
+          memory: 150M
+        reservations:
+          cpus: '0.01'
+          memory: 30M
+    expose:
+      - "80"
+    environment:
+      - VIRTUAL_HOST=aws.abcdef.com,aws.google.com
+      - VIRTUAL_PORT=80
