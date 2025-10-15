@@ -15,14 +15,38 @@ $ docker build -t myblog:1.1.0 docker_file/httpd/
 $ docker run -dit --name myblog-1 -p 8051:80 myblog:1.1.0
 $ docker run -dit --name myblog-2 -p 8052:80 myblog:1.1.0
 
-$ docker build -t nginx_lb:1.1.0 docker_file/nginx/
-# https://docs.docker.com/engine/reference/commandline/run/#options
-$ docker run --name nginx_lb-1 -d -p 9051:80 --link myblog-1 --link myblog-2 nginx_lb:1.1.0
+$ docker build -t nginx_lb:1.1.0 docker_file/nginx/ # https://docs.docker.com/engine/reference/commandline/run/#options $ docker run --name nginx_lb-1 -d -p 9051:80 --link myblog-1 --link myblog-2 nginx_lb:1.1.0
 
 # 확인
 # http://localhost:9091 반복 접근
 $ sudo docker logs -f myblog-1
 $ sudo docker logs -f myblog-2
+```
+
+## Rolling Deploy ( Update )
+- 요구사항 : 블로그 디자인 바뀜 / 무중단 업데이트 해야함
+- 바뀐 블로그 : https://github.com/diginori/diginori.github.io
+- 바뀐 블로그 로컬 심플테스트 : python3 -m http.server 9876
+```bash
+# Dockerfile 변경
+$ cat docker_file/httpd/Dockerfile | grep clone
+#RUN ["git", "clone", "https://github.com/dMario24/dMario24.github.io.git", "/usr/local/apache2/app/blog"]
+RUN ["git", "clone", "https://github.com/diginori/diginori.github.io", "/usr/local/apache2/app/blog"]
+
+# 블로그 소스코드를 바꾸고 다시 빌드 -> 2.0.0 으로 함
+$ docker build -t myblog:2.0.0 docker_file/httpd/
+
+# 순차적으로 1번을 내리고 새로운 1번으로 바꿈
+$ docker stop myblog-1; docker rm myblog-1
+
+# 바뀐 소스코드가 적용된 도커 컨테이너 가동 8501 로 확인
+$ docker run -dit --name myblog-1 -p 8051:80 myblog:2.0.0
+
+# myblog-2 도 위와 같은 순서로 교체
+$ docker stop myblog-2;docker rm myblog-2
+$ docker run -dit --name myblog-2 -p 8052:80 myblog:2.0.0
+
+# LB 로 확인 = 끝
 ```
 
 # docker compose
