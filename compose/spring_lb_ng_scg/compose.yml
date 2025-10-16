@@ -16,11 +16,13 @@ services:
           memory: 20M
 
   scg-proxy:
-    image: datamario24/sc-gateway:0.2.0
+    image: datamario24/sc-gateway:0.3.0
     ports:
       - "9000:9000"
     depends_on:
       - blog
+    environment:
+      - HELLO_SERVICE_URI=http://awsgoo-blog-1:8080
 
   blog:
     # build: ../../docker_file/httpd
