@@ -53,7 +53,7 @@ services:
       replicas: 1 # https://docs.docker.com/compose/compose-file/deploy/#replicas
       resources: # https://docs.docker.com/compose/compose-file/compose-file-v3/#resources
         limits:
-          cpus: '0.5'
+          cpus: '0.1'
           memory: 300M
         reservations:
           cpus: '0.01'
@@ -90,7 +90,7 @@ services:
       - "16001:16001"
       - "12000-12009:12000-12009"
     volumes:
-      - ./ngrinder-controller:/opt/ngrinder-controller
+      - /home/user/code/dcompose/compose/spring_lb_ng_scg_eureka/ngrinder-controller:/opt/ngrinder-controller
 
   agent:
     image: ngrinder/agent:3.5.9-p1
